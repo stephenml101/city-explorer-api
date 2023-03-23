@@ -40,16 +40,18 @@ app.get('/hello', (request, response) => {
   response.status(200).send(`Hello ${userFirstName} ${userLastName}! Welcome to my server!`);
 });
 
-app.get('/weather', (request, response,next) => {
+app.get('/weather', (request, response, next) => {
   console.log('this is the request', request)
   try {
-    // let lat = request.query.lat;
-    // let lon = request.query.lon;
+
+    // /weather?lat=Value&lon=Value&city_name=Value
+    let lat = request.query.lat;
+    let lon = request.query.lon;
     let searchQuery = request.query.city_name;
-    console.log('this is the search query', searchQuery);
-      let cityData = data.find(e => e.city_name === searchQuery);
+    
+      let cityData = data.find(e => e.city_name.toLowerCase() === searchQuery.toLocaleLowerCase());
 
-
+// TODO Send city into class to be groomed
 
       let returnData = cityData.data.map(eachDay => {
         return new Forecast(eachDay);
