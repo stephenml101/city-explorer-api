@@ -7,6 +7,7 @@ console.log('Yes our first server! Woo!');
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
+const axios =require('axios');
 
 let data = require('./data/weather.json')
 
@@ -40,37 +41,63 @@ app.get('/hello', (request, response) => {
   response.status(200).send(`Hello ${userFirstName} ${userLastName}! Welcome to my server!`);
 });
 
+ // TODO: WEATHER
 app.get('/weather', (request, response, next) => {
-  console.log('this is the request', request)
   try {
 
     // /weather?lat=Value&lon=Value&city_name=Value
     let lat = request.query.lat;
     let lon = request.query.lon;
     let searchQuery = request.query.city_name;
+    console.log(request.query);
     
-      let cityData = data.find(e => e.city_name.toLowerCase() === searchQuery.toLocaleLowerCase());
+   
+    let url = `https://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&days=6&lat=${lat}&lon=${lon}`;
+    let weatherResults = await axios.get(url);
 
-// TODO Send city into class to be groomed
-
-      let returnData = cityData.data.map(eachDay => {
-        return new Forecast(eachDay);
-
-      })
+let mappedWeatherToSend = weatherResults.data.data.map(dailyForecast => {
+  return new Forecast(dailyForecast);
+});
       
-      response.status(200).send(returnData);
+      response.status(200).send(moviesToSend);
   } catch(error) {
     next(error);
   }
 });
+// TODO: MOVIES
+app.get('/movies', async (request, response, next) => {
 
-// Class to groom bulk data
+  try {
+    //TODO: ACCEPT MY QUERIES
+    let keywordFromFrontEnd = request.query.searchQuery;
+    // TODO: BUILD MY URL FOR AXIOS
+    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIES_API_KEY}&language=en-US&page=1&include_adult=false&query=${keywordFromFrontEnd}`;
+    let movieResults = await axios.get(url);
+
+    // TODO: GROOM THAT DATA TO SEND TO FRONTEND
+    let moviesToSend = movieResults.data.results.map(movie => {
+      return new Movies(movie);
+    });
+
+    response.status(200).send(moviesToSend);
+  } catch (error) {
+    next(error);
+  }
 
 class Forecast {
   constructor (weatherObj){
-    console.log(weatherObj)
       this.date = weatherObj.valid_date;
       this.description = weatherObj.weather.description; 
+      this.lon = weatherObj.lon;
+    this.lat = weatherObj.la;
+  }
+}
+
+class Movies {
+  constructor(movieObj){
+    this.title=movieObj.original_title;
+    this.overview=movieObj.overview;
+    this.image = `https://image.tmdb.org/t/p/w500${movieObj.poster_path}`;
   }
 }
 
