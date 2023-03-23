@@ -7,7 +7,9 @@ console.log('Yes our first server! Woo!');
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
-const axios =require('axios');
+
+const getWeather = require ('./modules/weather.js');
+const getMovies = require('./modules/movies.js')
 
 let data = require('./data/weather.json')
 
@@ -42,64 +44,14 @@ app.get('/hello', (request, response) => {
 });
 
  // TODO: WEATHER
-app.get('/weather', async (request, response, next) => {
-  try {
 
-    // /weather?lat=Value&lon=Value&city_name=Value
-    let lat = request.query.lat;
-    let lon = request.query.lon;
-    // let searchQuery = request.query.city_name;
-    console.log(request.query);
-    
-   
-    let url = `https://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&days=6&lat=${lat}&lon=${lon}`;
-    let weatherResults = await axios.get(url);
+app.get('/weather', getWeather);
 
-let mappedWeatherToSend = weatherResults.data.data.map(dailyForecast => {
-  return new Forecast(dailyForecast);
-});
-      
-      response.status(200).send(mappedWeatherToSend);
-  } catch(error) {
-    next(error);
-  }
-});
+
 // TODO: MOVIES
-app.get('/Movies', async (request, response, next) => {
-
-  try {
-    //TODO: ACCEPT MY QUERIES
-    let cityFromFrontEnd = request.query.city_name;
-    // TODO: BUILD MY URL FOR AXIOS
-    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&language=en-US&page=1&include_adult=false&query=${cityFromFrontEnd}`;
-    let movieResults = await axios.get(url);
-
-    // TODO: GROOM THAT DATA TO SEND TO FRONTEND
-    let moviesToSend = movieResults.data.results.map(movie => {
-      return new Movies(movie);
-    });
-
-    response.status(200).send(moviesToSend);
-  } catch (error) {
-    next(error);
-  }
-});
-class Forecast {
-  constructor (weatherObj){
-      this.date = weatherObj.valid_date;
-      this.description = weatherObj.weather.description; 
-      this.lon = weatherObj.lon;
-    this.lat = weatherObj.la;
-  }
-}
+app.get('/Movies', getMovies);
  
-class Movies {
-  constructor(movieObj){
-    this.title=movieObj.original_title;
-    this.overview=movieObj.overview;
-    this.image = `https://image.tmdb.org/t/p/w500${movieObj.poster_path}`;
-  }
-}
+
 
 // Catch all - be at the bottom and serve as a  404 error
 app.get('*', (request, response) => {
