@@ -42,13 +42,13 @@ app.get('/hello', (request, response) => {
 });
 
  // TODO: WEATHER
-app.get('/weather', (request, response, next) => {
+app.get('/weather', async (request, response, next) => {
   try {
 
     // /weather?lat=Value&lon=Value&city_name=Value
     let lat = request.query.lat;
     let lon = request.query.lon;
-    let searchQuery = request.query.city_name;
+    // let searchQuery = request.query.city_name;
     console.log(request.query);
     
    
@@ -59,19 +59,19 @@ let mappedWeatherToSend = weatherResults.data.data.map(dailyForecast => {
   return new Forecast(dailyForecast);
 });
       
-      response.status(200).send(moviesToSend);
+      response.status(200).send(mappedWeatherToSend);
   } catch(error) {
     next(error);
   }
 });
 // TODO: MOVIES
-app.get('/movies', async (request, response, next) => {
+app.get('/Movies', async (request, response, next) => {
 
   try {
     //TODO: ACCEPT MY QUERIES
-    let keywordFromFrontEnd = request.query.searchQuery;
+    let cityFromFrontEnd = request.query.city_name;
     // TODO: BUILD MY URL FOR AXIOS
-    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIES_API_KEY}&language=en-US&page=1&include_adult=false&query=${keywordFromFrontEnd}`;
+    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&language=en-US&page=1&include_adult=false&query=${cityFromFrontEnd}`;
     let movieResults = await axios.get(url);
 
     // TODO: GROOM THAT DATA TO SEND TO FRONTEND
@@ -83,7 +83,7 @@ app.get('/movies', async (request, response, next) => {
   } catch (error) {
     next(error);
   }
-
+});
 class Forecast {
   constructor (weatherObj){
       this.date = weatherObj.valid_date;
@@ -92,7 +92,7 @@ class Forecast {
     this.lat = weatherObj.la;
   }
 }
-
+ 
 class Movies {
   constructor(movieObj){
     this.title=movieObj.original_title;
