@@ -4,10 +4,12 @@
 **Version**: 1.0.0 
 
 ## Overview
-<!-- Provide a high level overview of what this application is and why you are building it, beyond the fact that it's an assignment for this class. (i.e. What's your problem domain?) -->
+
+- This is the back-end server to the city-explorer project.
 
 ## Getting Started
-<!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
+
+- Create a server.js that handles all comunication between the front-end, as well as different modules that will communicate with API's and store info in a cache.
 
 ## Architecture
 <!-- Provide a detailed description of the application design. What technologies (languages, libraries, etc) you're using, and any other relevant design information. -->
@@ -20,12 +22,33 @@
 ## Credit and Collaborations
 <!-- Give credit (and a link) to other people or resources that helped you build this application. -->
 
-Name of feature: City Explorer
+Name of feature: City Explorer API
 
+3/22/23
 Estimate of time needed to complete: 3 hours
 
 Start time: 2:20
 
-Finish time: _____
+Finish time: 8pm
 
-Actual time needed to complete: _____
+Actual time needed to complete: 5:40 hours
+
+3/23/23
+
+Estimate of time needed to complete: 3 hour
+
+Start time: 2:00pm
+
+Finish time: 6:00pm
+
+Actual time needed to complete: 4 hours
+
+3/24/23
+
+Estimate of time needed to complete: 1 hour
+
+Start time: 12:45pm
+
+Finish time: 2:00pm
+
+Actual time needed to complete: 1:15 hours
